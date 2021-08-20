@@ -1,0 +1,109 @@
+function [] = tongue_twister()
+clc;clear
+
+%Call 1st sub function to open and read in the text file(form.txt).
+readstring = read_form('form.txt');
+
+%Call 2nd sub function to open and read in the tag and substitution string
+%from a text file(sub.txt)
+[tag,replacement]  = read_sub_tag();
+
+%Call 3rd sub function to replace all occurrences of a specific tag with
+%the substitution string
+newstring = replace_tags(readstring,tag,replacement);
+
+%Call 4th sub function to create the new text file with the tongue twister.
+create_output('tongue_twister_George.txt',newstring)
+end
+
+%1st sub function pseudocode
+%open the text file form.txt.
+%get every lines of the text file.
+%store the strings obtained in one string.
+%close the text file form.txt.
+function readstring = read_form(textfile)
+readstring = []; %empty readstring
+
+form_file = fopen('form.txt','r'); %open the text file
+line_1 = fgets(form_file); %get the first line
+line_2 = fgets(form_file); %get the second line
+line_3 = fgets(form_file); %get the third line
+readstring = strcat(line_1," ",line_2," ",line_3); %store all lines in one string
+fclose(form_file); %close the text file
+end
+
+%2nd sub function pseudocode
+%create empty tag and empty replacement.
+%open the text file sub.txt.
+%get the strings from the file.
+%get the string that need to be replaced and assign to tag.
+%get teh string that is used to replace others and assign to replacement.
+%lower and trim the tag.
+%trim the replacement string.
+%close the text file sub.txt.
+function [tag,replacement]  = read_sub_tag();
+tag = []; %empty tag
+replacement = []; %empty replacement
+
+sub_file = fopen('sub.txt'); %open the text file
+sub_line = fgetl(sub_file); %get the first line of the file
+tag = strtok(sub_line); %get the tag string
+[first_phrase,remain] = strtok(sub_line); %split the text file
+replacement = remain; %get the replacement string
+
+lower(tag); %transform the tag to lower case
+strtrim(tag); %trim the tag
+strtrim(replacement); %trim the replacement
+fclose(sub_file); %close the text file
+end
+
+%3rd sub function pseudocode
+%create a new empty string.
+%creat a second tag contains '.'.
+%split the string which stores all the strings .
+%replace tag and tag with '.' with replacement string.
+%switch line.
+function newstring = replace_tags(readstring,tag,replacement);
+newstring = ''; %create a new empty string
+tag_2 = [tag '.']; %create a second tag which contains '.'
+readstring = strsplit(readstring); %split readstring into pieces seperated by space
+for i = 1:length(readstring)
+    if strcmpi(readstring{i},tag) == 1
+        newstring = [newstring replacement ' '];
+    elseif strcmpi(readstring{i},tag_2) == 1
+        newstring = [newstring replacement '.' ' '];
+    else
+        newstring = [newstring readstring{i} ' '];
+    end
+end
+%check every piece of the string, replace the parts(which are the same as tag and tag2)
+%with replacement string and a space seperate them
+newstring = strsplit(newstring); %split the new string into pieces seperated by space
+
+for i = 1:length(newstring)
+    newstring{i} = [newstring{i} ' '];
+end     %add a blank space to the end of each element
+
+for i = 1:length(newstring)
+    if strcmpi(newstring{i},'But ')
+        newstring{i-1} = [newstring{i-1} newline];       
+    end
+end     %if one element ends with 'But ', switch line
+
+newstring{length(newstring)-6} = [newstring{length(newstring)-6} newline];
+%switch line after the last sixth element
+
+end
+
+%4th function pseudocode
+%create and open the new text file with the name George.
+%print the string that has replaced certain tag in the tongue twister in
+%the new text file.
+%close the new text file.
+function create_output(name,newstring)
+Str = fopen('tongue_twister_George.txt','w'); %create and open the new text file 
+for i= 1:length(newstring)
+    fprintf(Str,newstring{i});    
+end          %print each element from new string to the new text file
+fclose(Str); %close the text file
+end
