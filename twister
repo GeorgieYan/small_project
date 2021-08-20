@@ -101,7 +101,7 @@ end
 %the new text file.
 %close the new text file.
 function create_output(name,newstring)
-Str = fopen('tongue_twister_George.txt','w'); %create and open the new text file 
+Str = fopen('tongue_twister.txt','w'); %create and open the new text file 
 for i= 1:length(newstring)
     fprintf(Str,newstring{i});    
 end          %print each element from new string to the new text file
